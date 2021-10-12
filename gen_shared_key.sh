@@ -13,4 +13,4 @@ fi
 OWNKEYS=$1
 PUBKEY=$2
 
-openssl pkeyutl -derive -inkey hoge_dh_keys.pem -peerkey fuga_dh_pubkey.pem | sha256sum -b - | sed -e 's/ .*//g' | base64
+openssl pkeyutl -derive -inkey ${OWNKEYS} -peerkey ${PUBKEY} | sha256sum -b - | sed -e 's/ .*//g' | base64
