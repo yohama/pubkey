@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-while getopts d OPT
+while getopts de: OPT
 do
     case $OPT in
         d)  USE_DOCKER=1
+            ;;
+        e)  USE_DOCKER=1; CONTAINER_NAME=${OPTARG}
             ;;
     esac
 done
@@ -18,7 +20,11 @@ if [ -n "${USE_DOCKER}" ]; then
         if [ "$(arch)" = "x86_64" ]; then
             IMG_TAG='3.0.0-alpha13'
         fi
-        alias openssl='docker run --rm -i -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro -u $(id -u $USER):$(id -g $USER) -v /tmp:/tmp:z -v $(pwd):/tmp/exec:z --workdir="/tmp/exec" shamelesscookie/openssl:${IMG_TAG}'
+        if [ -n "${CONTAINER_NAME}" ]; then
+            alias openssl='docker exec -i ${CONTAINER_NAME} openssl'
+        else
+            alias openssl='docker run --rm -i -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro -u $(id -u $USER):$(id -g $USER) -v /tmp:/tmp:z -v $(pwd):/tmp/exec:z --workdir="/tmp/exec" shamelesscookie/openssl:${IMG_TAG}'
+        fi
     fi
 fi
 
